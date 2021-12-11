@@ -56,7 +56,6 @@ import com.android.systemui.shared.rotation.RotationButtonController;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.statusbar.phone.userswitcher.StatusBarUserSwitcherContainer;
-import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.window.StatusBarWindowController;
 import com.android.systemui.user.ui.binder.StatusBarUserChipViewBinder;
 import com.android.systemui.user.ui.viewmodel.StatusBarUserChipViewModel;
@@ -184,7 +183,6 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
         mTunerService.addTunable(this, STATUSBAR_LEFT_PADDING, STATUSBAR_RIGHT_PADDING, STATUSBAR_TOP_PADDING);
         // Always have Battery meters in the status bar observe the dark/light modes.
         Dependency.get(DarkIconDispatcher.class).addDarkReceiver(mBattery);
-        mClockController.addDarkReceiver();
         if (updateDisplayParameters()) {
             updateLayoutForCutout();
             if (truncatedStatusBarIconsFix()) {
@@ -202,7 +200,6 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
         super.onDetachedFromWindow();
         mTunerService.removeTunable(this);
         Dependency.get(DarkIconDispatcher.class).removeDarkReceiver(mBattery);
-        mClockController.removeDarkReceiver();
         mDisplayCutout = null;
 
         if (mRotationButtonController != null) {
