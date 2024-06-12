@@ -38,7 +38,6 @@ import static com.android.systemui.statusbar.NotificationLockscreenUserManager.P
 import static com.android.systemui.statusbar.StatusBarState.SHADE;
 
 import android.annotation.Nullable;
-import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.IWallpaperManager;
 import android.app.KeyguardManager;
@@ -2661,6 +2660,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
             }
 
             DejankUtils.stopDetectingBlockingIpcs(tag);
+            mMediaArtUtils.updateMediaArtVisibility();
         }
 
         @Override
@@ -2727,7 +2727,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 }
             });
             DejankUtils.stopDetectingBlockingIpcs(tag);
-            mMediaArtUtils.updateMediaArtVisibility();
         }
 
         /**
