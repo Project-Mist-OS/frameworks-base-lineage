@@ -22,10 +22,18 @@ public class RisingSettingsConstants {
     public static final String VOLUME_STYLE = "custom_volume_styles";
     public static final String STATUSBAR_CLOCK_CHIP = Settings.System.STATUSBAR_CLOCK_CHIP;
     public static final String QS_PANEL_TILE_HAPTIC = "qs_panel_tile_haptic";
+    public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+    public static final String STATUS_BAR_BATTERY_TEXT_CHARGING = "status_bar_battery_text_charging";
+    public static final String STATUSBAR_BATTERY_BAR = "statusbar_battery_bar";
+    public static final String STATUS_BAR_LOGO_POSITION = "status_bar_logo_position";
 
     public static final String[] SYSTEM_SETTINGS_KEYS = {
         STATUSBAR_CLOCK_CHIP,
-        QS_PANEL_TILE_HAPTIC
+        QS_PANEL_TILE_HAPTIC,
+        STATUS_BAR_SHOW_BATTERY_PERCENT,
+        STATUS_BAR_BATTERY_TEXT_CHARGING,
+        STATUSBAR_BATTERY_BAR,
+        STATUS_BAR_LOGO_POSITION
     };
     
     public static final String[] SECURE_SETTINGS_KEYS = {
