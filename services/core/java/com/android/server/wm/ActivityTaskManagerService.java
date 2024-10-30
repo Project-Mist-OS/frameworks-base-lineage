@@ -3339,6 +3339,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
     }
 
     static void enforceTaskPermission(String func) {
+        if (com.android.internal.util.android.BypassUtils.shouldBypassTaskPermission(Binder.getCallingUid())) {
+            return;
+        }
         if (checkCallingPermission(MANAGE_ACTIVITY_TASKS) == PackageManager.PERMISSION_GRANTED) {
             return;
         }
