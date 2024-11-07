@@ -31,6 +31,9 @@ public class RisingSettingsConstants {
     public static final String SEARCH_BAR_STYLE = "search_bar_style";
     public static final String QS_TILE_LABEL_HIDE = "qs_tile_label_hide";
     public static final String QS_TILE_VERTICAL_LAYOUT = "qs_tile_vertical_layout";
+    public static final String LOCKSCREEN_WIDGETS_ENABLED = "lockscreen_widgets_enabled";
+    public static final String LOCKSCREEN_WIDGETS = "lockscreen_widgets";
+    public static final String LOCKSCREEN_WIDGETS_EXTRAS = "lockscreen_widgets_extras";
 
     public static final String[] SYSTEM_SETTINGS_KEYS = {
         STATUSBAR_CLOCK_CHIP,
@@ -42,7 +45,10 @@ public class RisingSettingsConstants {
         SETTINGS_ICON_STYLE,
         SEARCH_BAR_STYLE,
         QS_TILE_LABEL_HIDE,
-        QS_TILE_VERTICAL_LAYOUT
+        QS_TILE_VERTICAL_LAYOUT,
+        LOCKSCREEN_WIDGETS_ENABLED,
+        LOCKSCREEN_WIDGETS,
+        LOCKSCREEN_WIDGETS_EXTRAS
     };
     
     public static final String[] SECURE_SETTINGS_KEYS = {
