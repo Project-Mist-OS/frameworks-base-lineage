@@ -456,12 +456,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     @Override
     public void onPause() {
         super.onPause();
-        mCommandQueue.removeCallback(this);
-        mStatusBarStateController.removeCallback(this);
-        mTunerService.removeTunable(this);
-        mClockController.removeTunable();
-        mOngoingCallController.removeCallback(mOngoingCallListener);
-        mAnimationScheduler.removeCallback(this);
+        unRegisterCallbacks();
     }
 
     @Override
@@ -487,6 +482,19 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         
         mClockPaddingStartArray = null;
         mClockPaddingEndArray = null;
+        
+        unRegisterCallbacks();
+    }
+    
+    public void unRegisterCallbacks() {
+        mBlockedIcons.clear();
+        mStartableStates.clear();
+        mCommandQueue.removeCallback(this);
+        mStatusBarStateController.removeCallback(this);
+        mTunerService.removeTunable(this);
+        mClockController.removeTunable();
+        mOngoingCallController.removeCallback(mOngoingCallListener);
+        mAnimationScheduler.removeCallback(this);
     }
 
     @Override
