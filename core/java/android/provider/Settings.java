@@ -6846,6 +6846,53 @@ public final class Settings {
         public static final String QS_TRANSPARENCY = "qs_transparency";
 
         /**
+         * Whether to display cross sign for a data disabled connection
+         * @hide
+         */
+        public static final String DATA_DISABLED_ICON = "data_disabled_icon";
+
+        /**
+         * Show app volume rows in volume panel
+         * @hide
+         */
+        public static final String SHOW_APP_VOLUME = "show_app_volume";
+
+        /**
+         * @hide
+         */
+        public static final String SCREENSHOT_SHUTTER_SOUND = "screenshot_shutter_sound";
+
+        /**
+         * Change quick settings tiles animation style
+         * @hide
+         */
+        public static final String QS_TILE_ANIMATION_STYLE = "qs_tile_animation_style";
+
+        /**
+         * Change quick settings tiles animation duration
+         * @hide
+         */
+        public static final String QS_TILE_ANIMATION_DURATION = "qs_tile_animation_duration";
+
+        /**
+         * Change quick settings tiles interpolator
+         * @hide
+         */
+        public static final String QS_TILE_ANIMATION_INTERPOLATOR = "qs_tile_animation_interpolator";
+
+        /**
+         * Whether to control brightness from status bar
+         * 0 = 0ff, 1 = on
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
+         * @hide
+         */
+        public static final String UDFPS_ICON = "udfps_icon";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
