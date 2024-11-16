@@ -246,7 +246,7 @@ open class VerticalSlider(context: Context, attrs: AttributeSet? = null) : CardV
     }
 
     fun translucentQsStyle(): Boolean {
-        val translucentStyles = listOf(1, 2, 3)
+        val translucentStyles = listOf(1, 2, 3, 9)
         return translucentStyles.contains(qsPaneStyle())
     }
 
