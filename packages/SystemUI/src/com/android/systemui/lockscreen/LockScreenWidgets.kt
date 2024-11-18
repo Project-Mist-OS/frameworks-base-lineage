@@ -21,13 +21,6 @@ class LockScreenWidgets(context: Context, attrs: AttributeSet) : LinearLayout(co
 
     private val mViewController: LockScreenWidgetsController? = LockScreenWidgetsController(this)
 
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        super.onVisibilityChanged(changedView, visibility)
-        if (visibility == VISIBLE && isAttachedToWindow) {
-            mViewController?.updateMediaController()
-        }
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mViewController?.registerCallbacks()
