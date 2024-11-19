@@ -489,7 +489,7 @@ public class QSPanel extends LinearLayout {
      * @return true if the media view needs margin on the top to separate it from the qs tiles
      */
     protected boolean mediaNeedsTopMargin() {
-        return false;
+        return TileUtils.canShowQsWidgets(mContext);
     }
 
     private boolean needsDynamicRowsAndColumns() {
@@ -502,6 +502,11 @@ public class QSPanel extends LinearLayout {
         // Let's first move the tileLayout to the new parent, since that should come first.
         switchToParent((View) newLayout, parent, index);
         index++;
+
+        if (mMediaHostView != null && TileUtils.canShowQsWidgets(mContext)) {
+            switchToParent(mMediaHostView, parent, index);
+            index++;
+        }
 
         if (mFooter != null) {
             // Then the footer with the settings

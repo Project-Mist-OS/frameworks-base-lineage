@@ -390,8 +390,13 @@ constructor(
     }
 
     /** Get the constraintSet for a given expansion */
-    private fun constraintSetForExpansion(expansion: Float): ConstraintSet =
-        if (expansion > 0) expandedLayout else collapsedLayout
+    private fun constraintSetForExpansion(expansion: Float): ConstraintSet {
+        return when {
+            com.android.systemui.qs.TileUtils.canShowQsWidgets(context) -> collapsedLayout
+            expansion > 0 -> expandedLayout
+            else -> collapsedLayout
+        }
+    }
 
     /** Set the height of UMO background constraints. */
     private fun setBackgroundHeights(height: Int) {

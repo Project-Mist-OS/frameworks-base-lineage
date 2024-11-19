@@ -199,4 +199,10 @@ class BrightnessSlider(context: Context, attrs: AttributeSet? = null) :
         super.updateProgressRect()
         updateBrightnessIcon()
     }
+    
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        mContentResolver.unregisterContentObserver(mBrightnessObserver)
+        displayManager.unregisterDisplayListener(mDisplayListener)
+    }
 }
