@@ -184,7 +184,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
     private final RisingThemeController mThemeController;
     private final TunerService mTunerService;
 
-    private float mChromaFactor = 0f;
+    private float mChromaFactor = 1.0f;
     private float mLuminanceFactor = 1.0f;
     private boolean mTintBackground;
     private boolean mOverrideColorAccent;
@@ -633,7 +633,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
         switch (key) {
             case PREF_CHROMA_FACTOR:
                 mChromaFactor =
-                        (float) TunerService.parseInteger(newValue, 0) / 100f;
+                        (float) TunerService.parseInteger(newValue, 100) / 100f;
                 break;
             case PREF_LUMINANCE_FACTOR:
                 mLuminanceFactor =
