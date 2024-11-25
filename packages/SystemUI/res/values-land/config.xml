@@ -41,7 +41,7 @@
     <integer name="power_menu_max_columns">4</integer>
 
     <!-- Max number of columns for power menu lite -->
-    <integer name="power_menu_lite_max_columns">4</integer>
+    <integer name="power_menu_lite_max_columns">2</integer>
     <!-- Max number of rows for power menu lite -->
     <integer name="power_menu_lite_max_rows">2</integer>
 
