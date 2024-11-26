@@ -324,7 +324,9 @@ public class ImageWallpaper extends WallpaperService {
             if (canvas != null) {
                 Rect dest = mSurfaceHolder.getSurfaceFrame();
                 try {
-                    if (SystemProperties.getBoolean("persist.sys.wallpaper.blur_enabled", false)) {
+                    int blurType = SystemProperties.getInt("persist.sys.wallpaper.blur_enabled", 0);
+                    // allow for both home and ls wallpaper, lockscreen only, home only
+                    if (blurType == 1 || (blurType == 2 && isLockScreenWallpaper()) || (blurType == 3 && !isLockScreenWallpaper())) {
                         bitmap = getBlurredBitmap(bitmap);
                     }
                     canvas.drawBitmap(bitmap, null, dest, null);
@@ -335,30 +337,46 @@ public class ImageWallpaper extends WallpaperService {
             }
             Trace.endSection();
         }
+        
+	    private boolean isLockScreenWallpaper() {
+		    return (this.getWallpaperFlags() & FLAG_LOCK)
+				    == FLAG_LOCK;
+	    }
 
         private Bitmap getBlurredBitmap(Bitmap bitmap) {
-            Bitmap outputBitmap = Bitmap.createBitmap(bitmap);
+            float scaleFactor = 0.25f;
+            int scaledWidth = Math.round(bitmap.getWidth() * scaleFactor);
+            int scaledHeight = Math.round(bitmap.getHeight() * scaleFactor);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
+            Bitmap outputBitmap = Bitmap.createBitmap(scaledBitmap.getWidth(), scaledBitmap.getHeight(), scaledBitmap.getConfig());
             RenderScript rs = RenderScript.create(getDisplayContext());
             ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-            int userBlurRadius = SystemProperties.getInt("persist.sys.wallpaper.blur_radius", 100);
-            // ScriptIntrinsicBlur only supports max blur radius of 25
+            int blurType = SystemProperties.getInt("persist.sys.wallpaper.blur_type", 0);
+            int userBlurRadius;
+            switch (blurType) {
+                case 1: // Frosted glass
+                    userBlurRadius = 200;
+                    break;
+                default: // Glass
+                    userBlurRadius = 25;
+                    break;
+            }
             float blurRadius = Math.min(userBlurRadius, 25);
-            Allocation input = Allocation.createFromBitmap(rs, bitmap);
-            Allocation output = Allocation.createFromBitmap(rs, outputBitmap);
             int passes = Math.max(1, userBlurRadius / 25);
+            Allocation input = Allocation.createFromBitmap(rs, scaledBitmap);
+            Allocation output = Allocation.createFromBitmap(rs, outputBitmap);
             blurScript.setRadius(blurRadius);
-            // based from renderengine logic
             for (int i = 0; i < passes; i++) {
                 blurScript.setInput(input);
                 blurScript.forEach(output);
+                output.copyTo(outputBitmap);
                 input.copyFrom(outputBitmap);
             }
-            output.copyTo(outputBitmap);
             input.destroy();
             output.destroy();
             blurScript.destroy();
             rs.destroy();
-            return outputBitmap;
+            return Bitmap.createScaledBitmap(outputBitmap, bitmap.getWidth(), bitmap.getHeight(), true);
         }
 
         @VisibleForTesting
