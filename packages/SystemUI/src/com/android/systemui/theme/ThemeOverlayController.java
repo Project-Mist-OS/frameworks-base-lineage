@@ -802,6 +802,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                         p.second.getArgb(mLightColorScheme.getMaterialScheme()), null);
                 return;
             }
+
             overlay.setResourceValue(prefix + "_light", TYPE_INT_COLOR_ARGB8,
                     p.second.getArgb(mLightColorScheme.getMaterialScheme()), null);
             overlay.setResourceValue(prefix + "_dark", TYPE_INT_COLOR_ARGB8,
