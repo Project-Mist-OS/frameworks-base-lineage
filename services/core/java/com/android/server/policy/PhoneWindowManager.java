@@ -7220,7 +7220,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             public void onSwipeThreeFingers() {
                 Action threeFingersSwipeAction = Action.fromSettings(mContext.getContentResolver(),
                         LineageSettings.System.KEY_THREE_FINGERS_SWIPE_ACTION,
-                        Action.fromIntSafe(12));
+                        Action.NOTHING);
                 if (threeFingersSwipeAction == Action.NOTHING)
                     return;
                 long now = SystemClock.uptimeMillis();
