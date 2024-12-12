@@ -41,6 +41,7 @@
     <!-- Colors for Power Menu Lite -->
     <color name="global_actions_lite_background">@color/transparent</color>
     <color name="global_actions_lite_button_background">@android:color/system_accent1_400</color>
+    <color name="global_actions_lite_button_background_focused">#666666</color>
     <color name="global_actions_lite_text">@android:color/system_accent1_50</color>
     <color name="global_actions_lite_icon">@android:color/system_accent1_50</color>
     <color name="global_actions_lite_emergency_background">#F85D4D</color>
