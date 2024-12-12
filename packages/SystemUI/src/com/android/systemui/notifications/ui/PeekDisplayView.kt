@@ -82,8 +82,7 @@ class PeekDisplayView @JvmOverloads constructor(
     private var isMinimalStyleEnabled = false
     public var isPeekDisplayEnabled = false
     private var showOverflow = false
-    private var mDozing = false
-    private var mPulsing = false
+    public var mDozing = false
 
     init {
         LayoutInflater.from(context).inflate(R.layout.peek_display, this, true)
@@ -170,7 +169,7 @@ class PeekDisplayView @JvmOverloads constructor(
         }
         lastFilteredNotifications = filteredNotifications
         notificationAdapter.clearSelection()
-        if (filteredNotifications.isNotEmpty()) {
+        if (filteredNotifications.isNotEmpty() && !mDozing) {
             notificationAdapter.submitList(filteredNotifications)
             notificationShelf?.visibility = View.VISIBLE
         } else {
@@ -268,6 +267,14 @@ class PeekDisplayView @JvmOverloads constructor(
     fun resetNotificationShelf() {
         notificationAdapter.clearSelection()
         notificationShelf?.scrollToPosition(0)
+    }
+    
+    fun updateShelfState() {
+        if (mDozing) {
+            notificationShelf?.visibility = View.GONE
+        } else {
+            updateNotificationShelf(notificationListener.getActiveNotifications().toList())
+        }
     }
 
     fun hideNotificationCard() {

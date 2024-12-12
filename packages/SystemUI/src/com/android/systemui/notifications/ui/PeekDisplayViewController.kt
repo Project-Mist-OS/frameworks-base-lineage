@@ -88,12 +88,13 @@ class PeekDisplayViewController private constructor() :
             return
         }
         mDozing = dozing
+        mPeekDisplayView.mDozing = mDozing
         if (mDozing) {
             hidePeekDisplayView()
-            mPeekDisplayView.resetNotificationShelf()
         } else {
             showPeekDisplayView()
         }
+        mPeekDisplayView.updateShelfState()
     }
 
     override fun onUiModeChanged() {
@@ -137,6 +138,7 @@ class PeekDisplayViewController private constructor() :
     fun hidePeekDisplayView() {
         mView.visibility = View.GONE
         mPeekDisplayView.hideNotificationCard()
+        mPeekDisplayView.resetNotificationShelf()
     }
 
     fun showPeekDisplayView() {
