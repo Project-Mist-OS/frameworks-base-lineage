@@ -245,6 +245,7 @@ import com.android.server.am.ServiceRecord.TimeLimitedFgsInfo;
 import com.android.server.pm.KnownPackages;
 import com.android.server.uri.NeededUriGrants;
 import com.android.server.utils.AnrTimer;
+import com.android.server.wm.ActivityRecord;
 import com.android.server.wm.ActivityServiceConnectionsHolder;
 
 import java.io.FileDescriptor;
