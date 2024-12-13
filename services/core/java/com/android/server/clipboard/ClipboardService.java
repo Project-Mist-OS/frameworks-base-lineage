@@ -118,6 +118,19 @@ public class ClipboardService extends SystemService {
     @VisibleForTesting
     public static final long DEFAULT_CLIPBOARD_TIMEOUT_MILLIS = 3600000;
 
+    /**
+     * Device config property for whether clipboard auto clear is enabled on the device
+     **/
+    public static final String PROPERTY_AUTO_CLEAR_ENABLED =
+            "auto_clear_enabled";
+
+    /**
+     * Device config property for time period in milliseconds after which clipboard is auto
+     * cleared
+     **/
+    public static final String PROPERTY_AUTO_CLEAR_TIMEOUT =
+            "auto_clear_timeout";
+
     // DeviceConfig properties
     private static final String PROPERTY_MAX_CLASSIFICATION_LENGTH = "max_classification_length";
     private static final int DEFAULT_MAX_CLASSIFICATION_LENGTH = 400;
@@ -589,16 +602,12 @@ public class ClipboardService extends SystemService {
             }
         }
 
-        private boolean isAutoClearEnabled() {
-            return Settings.Secure.getInt(getContext().getContentResolver(),
-                Settings.Secure.CLIPBOARD_AUTO_CLEAR_ENABLED, 1) == 1;
-        }
-
         private void scheduleAutoClear(
                 @UserIdInt int userId, int intendingUid, int intendingDeviceId) {
             final long oldIdentity = Binder.clearCallingIdentity();
             try {
-                if (isAutoClearEnabled()) {
+                if (DeviceConfig.getBoolean(DeviceConfig.NAMESPACE_CLIPBOARD,
+                        PROPERTY_AUTO_CLEAR_ENABLED, true)) {
                     Pair<Integer, Integer> userIdDeviceId = new Pair<>(userId, intendingDeviceId);
                     mClipboardClearHandler.removeEqualMessages(ClipboardClearHandler.MSG_CLEAR,
                             userIdDeviceId);
@@ -618,8 +627,9 @@ public class ClipboardService extends SystemService {
         }
 
         private long getTimeoutForAutoClear() {
-            return Settings.Secure.getLong(getContext().getContentResolver(),
-                Settings.Secure.CLIPBOARD_AUTO_CLEAR_TIMEOUT, DEFAULT_CLIPBOARD_TIMEOUT_MILLIS);
+            return DeviceConfig.getLong(DeviceConfig.NAMESPACE_CLIPBOARD,
+                    PROPERTY_AUTO_CLEAR_TIMEOUT,
+                    DEFAULT_CLIPBOARD_TIMEOUT_MILLIS);
         }
 
         @Override
