@@ -85,7 +85,9 @@ class PeekDisplayView @JvmOverloads constructor(
     public var mDozing = false
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.peek_display, this, true)
+        val layout = if (id == R.id.peek_display_top) R.layout.peek_display_top 
+            else R.layout.peek_display_bottom 
+        LayoutInflater.from(context).inflate(layout, this, true)
         notificationShelf = findViewById(R.id.notificationShelf)
         notificationCard = findViewById(R.id.notificationCard)
         notificationIcon = findViewById(R.id.notificationIcon)
