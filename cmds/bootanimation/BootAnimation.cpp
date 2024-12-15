@@ -76,7 +76,7 @@ static const char APEX_BOOTANIMATION_FILE[] = "/apex/com.android.bootanimation/e
 static const char OEM_SHUTDOWNANIMATION_FILE[] = "/oem/media/shutdownanimation.zip";
 static const char PRODUCT_SHUTDOWNANIMATION_FILE[] = "/product/media/shutdownanimation.zip";
 static const char SYSTEM_SHUTDOWNANIMATION_FILE[] = "/system/media/shutdownanimation.zip";
-static const char DEFAULT_BOOTANIMATION_FILE[] = "/product/media/bootanimation_rising.zip";
+static const char DEFAULT_BOOTANIMATION_FILE[] = "/product/media/bootanimation_mist.zip";
 static const char CUSTOM_BOOTANIMATION_FILE[] = "/data/misc/bootanim/bootanimation.zip";
 
 static constexpr const char* PRODUCT_USERSPACE_REBOOT_ANIMATION_FILE = "/product/media/userspace-reboot.zip";
