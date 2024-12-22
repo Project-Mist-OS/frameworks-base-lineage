@@ -1680,10 +1680,12 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             state.setSurfaceColor(surface);
         }
 
-        mBehindColors.setMainColor(mUseDualToneColor ? surface : background);
+        // hide the surface on landscape 
+        final boolean showSurface = mUseDualToneColor && !mIsLandscape;
+        mBehindColors.setMainColor(showSurface ? surface : background);
         mBehindColors.setSecondaryColor(accent);
         final boolean isSurfaceBackgroundLight = !ContrastColorUtil.isColorDark(surface);
-        mBehindColors.setSupportsDarkText(mUseDualToneColor ? isSurfaceBackgroundLight : isBackgroundLight);
+        mBehindColors.setSupportsDarkText(showSurface ? isSurfaceBackgroundLight : isBackgroundLight);
 
         mNeedsDrawableColorUpdate = true;
     }
