@@ -143,16 +143,6 @@ class MediaSessionManagerHelper private constructor(private val context: Context
         }
     }
 
-    fun seekTo(time: Long) {
-        val controller = getActiveLocalMediaController()
-        controller?.transportControls?.seekTo(time)
-    }
-
-    fun getTotalDuration(): Long {
-        val metadata = getMediaMetadata()
-        return metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L
-    }
-
     private fun saveLastNonNullPackageName() {
         val packageName = getActiveLocalMediaController()?.packageName
         if (!TextUtils.isEmpty(packageName) && packageName != lastSavedPackageName) {
@@ -231,13 +221,8 @@ class MediaSessionManagerHelper private constructor(private val context: Context
             getMediaControllerPlaybackState(getActiveLocalMediaController()) == PlaybackState.STATE_PLAYING
     }
 
-    fun getMediaControllerPlaybackState(controller: MediaController?): Int {
+    private fun getMediaControllerPlaybackState(controller: MediaController?): Int {
         return controller?.playbackState?.state ?: PlaybackState.STATE_NONE
-    }
-
-    fun getMediaControllerPlaybackState(): PlaybackState? {
-        val controller = getActiveLocalMediaController()
-        return controller?.playbackState ?: null
     }
 
     private fun sameSessions(a: MediaController?, b: MediaController?): Boolean {

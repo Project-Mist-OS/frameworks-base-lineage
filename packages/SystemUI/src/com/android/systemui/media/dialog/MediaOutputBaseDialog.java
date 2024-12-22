@@ -39,10 +39,11 @@ import android.media.session.MediaSessionLegacyHelper;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +54,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import androidx.annotation.VisibleForTesting;
@@ -91,10 +90,6 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     final BroadcastSender mBroadcastSender;
     
     private final MediaSessionManagerHelper mMediaSessionManagerHelper;
-    private SeekBar mSeekBar;
-    private Handler mSeekBarUpdateHandler;
-    private long mTotalDuration;
-    private long mCurrentPosition;
 
     /**
      * Signals whether the dialog should NOT show app-related metadata.
@@ -128,7 +123,6 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     private ImageView mPrevIcon;
     private ImageView mPlayIcon;
     private ImageView mNexticon;
-    private TextView mCurrentTime, mTotalTime;
 
     MediaOutputBaseAdapter mAdapter;
 
@@ -288,39 +282,10 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
         mNexticon = mDialogView.requireViewById(R.id.next_button);
         mPlayIcon = mDialogView.requireViewById(R.id.play_button);
         mPrevIcon = mDialogView.requireViewById(R.id.prev_button);
-        mCurrentTime = mDialogView.findViewById(R.id.current_time);
-        mTotalTime = mDialogView.findViewById(R.id.total_time);
-
-        mNexticon.setOnClickListener(v -> mMediaSessionManagerHelper.nextSong());
-        mPlayIcon.setOnClickListener(v -> mMediaSessionManagerHelper.toggleMediaPlaybackState());
-        mPrevIcon.setOnClickListener(v -> mMediaSessionManagerHelper.prevSong());
-
-        mSeekBar = mDialogView.requireViewById(R.id.seekBar);
-
-        mSeekBarUpdateHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                updateSeekBar();
-            }
-        };
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    long seekToTime = (mTotalDuration * progress) / 100;
-                    mMediaSessionManagerHelper.seekTo(seekToTime);
-                }
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                stopSeekBarUpdates();
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                startSeekBarUpdates();
-            }
-        });
+        
+        mNexticon.setOnClickListener(v -> nextSong());
+        mPlayIcon.setOnClickListener(v -> toggleMediaPlayback());
+        mPrevIcon.setOnClickListener(v -> prevSong());
 
         mDeviceListLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 mDeviceListLayoutListener);
@@ -338,11 +303,35 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
 
         mDismissing = false;
     }
+
+    private void toggleMediaPlayback() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+    }
+
+    private void prevSong() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+    }
+    
+    private void nextSong() {
+        dispatchMediaKeyWithWakeLockToMediaSession(KeyEvent.KEYCODE_MEDIA_NEXT);
+    }
+    
+    private void dispatchMediaKeyWithWakeLockToMediaSession(final int keycode) {
+        final MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
+        if (helper == null) {
+            return;
+        }
+        KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
+                SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
+        helper.sendMediaButtonEvent(event, true);
+        event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
+        helper.sendMediaButtonEvent(event, true);
+        refresh();
+    }
     
     private void updateMediaState() {
         if (mPlayIcon == null) return;
         mPlayIcon.setImageDrawable(mContext.getDrawable(mMediaSessionManagerHelper.isMediaPlaying() ? R.drawable.ic_media_output_pause : R.drawable.ic_media_output_play));
-        refresh();
     }
     
     @Override
@@ -448,20 +437,9 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
                 mAppResourceIcon.setVisibility(View.GONE);
             }
         }
-        int mediaColor = mMediaOutputController.getColorItemContent();
-        mNexticon.setColorFilter(mediaColor);
-        mPlayIcon.setColorFilter(mediaColor);
-        mPrevIcon.setColorFilter(mediaColor);
-        mCurrentTime.setTextColor(mediaColor);
-        mTotalTime.setTextColor(mediaColor);
-        Drawable progressDrawable = mSeekBar.getProgressDrawable();
-        if (progressDrawable != null) {
-            progressDrawable.setColorFilter(mediaColor, PorterDuff.Mode.SRC_IN);
-        }
-        Drawable thumbDrawable = mSeekBar.getThumb();
-        if (thumbDrawable != null) {
-            thumbDrawable.setColorFilter(mediaColor, PorterDuff.Mode.SRC_IN);
-        }
+        mNexticon.setColorFilter(mMediaOutputController.getColorItemContent());
+        mPlayIcon.setColorFilter(mMediaOutputController.getColorItemContent());
+        mPrevIcon.setColorFilter(mMediaOutputController.getColorItemContent());
         if (mHeaderIcon.getVisibility() == View.VISIBLE) {
             final int size = getHeaderIconSize();
             final int padding = mContext.getResources().getDimensionPixelSize(
@@ -691,43 +669,6 @@ public abstract class MediaOutputBaseDialog extends SystemUIDialog implements
     @Override
     public void onPlaybackStateChanged() {
         updateMediaState();
-        if (mMediaSessionManagerHelper.isMediaPlaying()) {
-            startSeekBarUpdates();
-        } else {
-            stopSeekBarUpdates();
-        }
-    }
-
-    private void startSeekBarUpdates() {
-        mSeekBarUpdateHandler.sendEmptyMessageDelayed(0, 500);
-    }
-
-    private void stopSeekBarUpdates() {
-        mSeekBarUpdateHandler.removeMessages(0);
-    }
-
-    private void updateSeekBar() {
-        mTotalDuration = mMediaSessionManagerHelper.getTotalDuration();
-        android.media.session.PlaybackState playbackState = mMediaSessionManagerHelper.getMediaControllerPlaybackState();
-        if (playbackState != null) {
-            mCurrentPosition = playbackState.getPosition();
-            if (mMediaSessionManagerHelper.isMediaPlaying()) {
-                int progress = (int) ((mCurrentPosition * 100) / mTotalDuration);
-                mSeekBar.setProgress(progress);
-                mCurrentTime.setText(formatTime(mCurrentPosition));
-                mTotalTime.setText(formatTime(mTotalDuration));
-                startSeekBarUpdates();
-            }
-        } else {
-            mCurrentTime.setText("0:00");
-            mTotalTime.setText("0:00");
-        }
-    }
-
-    private String formatTime(long timeInMillis) {
-        int seconds = (int) (timeInMillis / 1000) % 60;
-        int minutes = (int) ((timeInMillis / 1000) / 60);
-        return String.format("%02d:%02d", minutes, seconds);
     }
 
     void onHeaderIconClick() {
