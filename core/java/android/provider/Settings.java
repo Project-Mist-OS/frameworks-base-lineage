@@ -6917,6 +6917,12 @@ public final class Settings {
         public static final String CHARGING_ANIMATION = "charging_animation";
 
         /**
+         * Enable and Disable Dual Tone Colors QsPanel
+         * @hide
+         */
+        public static final String QS_DUAL_TONE = "qs_dual_tone";
+
+        /**
          * These are all public system settings
          *
          * @hide
