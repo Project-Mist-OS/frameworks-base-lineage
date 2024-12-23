@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.Process;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.ArrayMap;
@@ -655,9 +656,13 @@ class AppErrors {
 
 
             // Add paste content for Memochō option
+            String devfp = SystemProperties.get("ro.vendor.build.fingerprint", "");
+            String mistVers = SystemProperties.get("ro.mist.version", "");
             data.paste = "time: " + timeMillis + "\n" +
-                    "msg: " + longMsg + "\n" +
-                    "stacktrace: " + stackTrace;
+            "device fp:" + devfp + "\n" +
+            "mist vers:" + mistVers + "\n" +
+            "msg: " + longMsg + "\n" +
+            "stacktrace: " + stackTrace;
 
             final Message msg = Message.obtain();
             msg.what = ActivityManagerService.SHOW_ERROR_UI_MSG;
