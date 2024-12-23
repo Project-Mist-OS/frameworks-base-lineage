@@ -367,9 +367,9 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             KeyguardTransitionInteractor keyguardTransitionInteractor,
             KeyguardInteractor keyguardInteractor,
             WallpaperRepository wallpaperRepository,
+            @Main CoroutineDispatcher mainDispatcher,
             LargeScreenShadeInterpolator largeScreenShadeInterpolator,
             TunerService tunerService) {
-            LargeScreenShadeInterpolator largeScreenShadeInterpolator) {
         mScrimStateListener = lightBarController::setScrimState;
         mLargeScreenShadeInterpolator = largeScreenShadeInterpolator;
         mDefaultScrimAlpha = BUSY_SCRIM_ALPHA;
@@ -1309,7 +1309,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
                     && !mBlankScreen;
 
             mScrimInFront.setColors(mColors, animateScrimInFront);
-            mScrimBehind.setColors(BehindColors, animateBehindScrim);
+            mScrimBehind.setColors(mBehindColors, animateBehindScrim);
             mNotificationsScrim.setColors(mColors, animateScrimNotifications);
 
             dispatchBackScrimState(mScrimBehind.getViewAlpha());
