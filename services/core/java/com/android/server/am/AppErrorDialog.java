@@ -203,7 +203,7 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
         }
     }
 
-    postToMkrBinAndCopyURL() {
+    private void postToMkrBinAndCopyURL() {
         // Post to Memochō
         MkrBinUtils.upload(mPaste, new MkrBinUtils.UploadResultCallback() {
             @Override
