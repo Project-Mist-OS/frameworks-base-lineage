@@ -44,10 +44,15 @@ public class ClockStyle extends RelativeLayout implements TunerService.Tunable {
             R.layout.keyguard_clock_simple,
             R.layout.keyguard_clock_miui,
             R.layout.keyguard_clock_ide,
-            R.layout.keyguard_clock_moto
+            R.layout.keyguard_clock_moto,
+            R.layout.keyguard_clock_dual,
+            R.layout.keyguard_clock_fluid,
+            R.layout.keyguard_clock_hyper,
+            R.layout.keyguard_clock_ios,
+            R.layout.keyguard_clock_sidebar
     };
 
-    private final static int[] mCenterClocks = {2, 3, 5, 6};
+    private final static int[] mCenterClocks = {2, 3, 5, 6, 7, 8, 9, 10, 11};
 
     private static final int DEFAULT_STYLE = 0; // Disabled
     public static final String CLOCK_STYLE_KEY = "clock_style";
