@@ -6923,6 +6923,13 @@ public final class Settings {
         public static final String QS_DUAL_TONE = "qs_dual_tone";
 
         /**
+         * Lockscreen Gif
+         * @hide
+         */
+        public static final String LOCKSCREEN_GIF_ENABLED = "lockscreen_gif_enabled";
+        public static final String LOCKSCREEN_GIF_PATH = "lockscreen_gif_path";
+
+        /**
          * These are all public system settings
          *
          * @hide
