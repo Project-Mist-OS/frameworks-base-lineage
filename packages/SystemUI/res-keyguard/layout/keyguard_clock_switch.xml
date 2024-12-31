@@ -64,6 +64,12 @@
         layout="@layout/keyguard_aod_style" />
 
       <include 
+        android:id="@+id/gif_ls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/lockscreen_status_view" />
+
+      <include 
         android:id="@+id/clock_ls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

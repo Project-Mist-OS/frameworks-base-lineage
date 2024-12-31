@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.android.systemui.gif.LockscreenGifOverlay
+        android:id="@+id/lockscreen_gif"
+        android:layout_width="@dimen/lockscreen_gif_width"
+        android:layout_height="@dimen/lockscreen_gif_height"
+        android:layout_above="@id/clock_view"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+</merge>
