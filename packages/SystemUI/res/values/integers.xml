@@ -51,6 +51,4 @@
     
     <integer name="tile_active_state_percentage_alpha">100</integer>
     <integer name="tile_inactive_state_percentage_alpha">0</integer>
-
-    <integer name="lockscreen_gif_fade_duration">500</integer>
 </resources>
