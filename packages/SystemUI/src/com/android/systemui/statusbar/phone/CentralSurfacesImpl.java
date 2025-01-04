@@ -1902,7 +1902,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
     }
 
     void onLongPressBrightnessChange() {
-        mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        mShadeController.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         adjustBrightness(mInitialTouchX);
         mLinger = BRIGHTNESS_CONTROL_LINGER_THRESHOLD + 1;
     }
