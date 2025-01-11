@@ -15,7 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.internal.util;
+
 import android.app.ActivityTaskManager;
 import android.app.Application;
 import android.app.TaskStackListener;
@@ -25,12 +27,17 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Binder;
 import android.os.Process;
+import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.android.internal.R;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
+
 public class PropImitationHooks {
+
     private static final String TAG = "PropImitationHooks";
     private static final boolean DEBUG = false;
 
@@ -39,6 +46,10 @@ public class PropImitationHooks {
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String PROCESS_GMS_UNSTABLE = PACKAGE_GMS + ".unstable";
     private static final String PACKAGE_NETFLIX = "com.netflix.mediaclient";
+
+    private static final String PROP_SECURITY_PATCH = "persist.sys.pihooks.security_patch";
+    private static final String PROP_FIRST_API_LEVEL = "persist.sys.pihooks.first_api_level";
+
     private static final ComponentName GMS_ADD_ACCOUNT_ACTIVITY = ComponentName.unflattenFromString(
             "com.google.android.gms/.auth.uiflows.minutemaid.MinuteMaidActivity");
 
@@ -47,9 +58,11 @@ public class PropImitationHooks {
 
     private static volatile String sProcessName;
     private static volatile boolean sIsGms, sIsFinsky, sIsPhotos;
+
     public static void setProps(Context context) {
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
+
         if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(processName)) {
             Log.e(TAG, "Null package or process name");
             return;
@@ -60,6 +73,7 @@ public class PropImitationHooks {
             Log.e(TAG, "Null resources");
             return;
         }
+
         sCertifiedProps = res.getStringArray(R.array.config_certifiedBuildProperties);
         sStockFp = res.getString(R.string.config_stockFingerprint);
         sNetflixModel = res.getString(R.string.config_netflixSpoofModel);
@@ -67,6 +81,7 @@ public class PropImitationHooks {
         sProcessName = processName;
         sIsGms = packageName.equals(PACKAGE_GMS) && processName.equals(PROCESS_GMS_UNSTABLE);
         sIsFinsky = packageName.equals(PACKAGE_FINSKY);
+
         /* Set Certified Properties for GMSCore
          * Set Stock Fingerprint for ARCore
          * Set custom model for Netflix
@@ -81,6 +96,7 @@ public class PropImitationHooks {
             setPropValue("MODEL", sNetflixModel);
         }
     }
+
     private static void setPropValue(String key, String value) {
         try {
             dlog("Setting prop " + key + " to " + value.toString());
@@ -98,8 +114,9 @@ public class PropImitationHooks {
             Log.e(TAG, "Failed to set prop " + key, e);
         }
     }
+
     private static void setCertifiedPropsForGms() {
-            if (sCertifiedProps.length == 0) {
+        if (sCertifiedProps.length == 0) {
             dlog("Certified props are not set");
             return;
         }
@@ -138,8 +155,21 @@ public class PropImitationHooks {
             }
             setPropValue(fieldAndProp[0], fieldAndProp[1]);
         }
+        setSystemProperty(PROP_SECURITY_PATCH, Build.VERSION.SECURITY_PATCH);
+        setSystemProperty(PROP_FIRST_API_LEVEL,
+                Integer.toString(Build.VERSION.DEVICE_INITIAL_SDK_INT));
     }
-private static boolean isGmsAddAccountActivityOnTop() {
+
+    private static void setSystemProperty(String name, String value) {
+        try {
+            SystemProperties.set(name, value);
+            dlog("Set system prop " + name + "=" + value);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to set system prop " + name + "=" + value, e);
+        }
+    }
+
+    private static boolean isGmsAddAccountActivityOnTop() {
         try {
             final ActivityTaskManager.RootTaskInfo focusedTask =
                     ActivityTaskManager.getService().getFocusedRootTaskInfo();
@@ -150,6 +180,7 @@ private static boolean isGmsAddAccountActivityOnTop() {
         }
         return false;
     }
+
     public static boolean shouldBypassTaskPermission(Context context) {
         // GMS doesn't have MANAGE_ACTIVITY_TASKS permission
         final int callingUid = Binder.getCallingUid();
@@ -163,10 +194,12 @@ private static boolean isGmsAddAccountActivityOnTop() {
         }
         return gmsUid == callingUid;
     }
+
     private static boolean isCallerSafetyNet() {
         return sIsGms && Arrays.stream(Thread.currentThread().getStackTrace())
                 .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
     }
+
     public static void onEngineGetCertificateChain() {
         // Check stack for SafetyNet or Play Integrity
         if (isCallerSafetyNet() || sIsFinsky) {
@@ -174,6 +207,7 @@ private static boolean isGmsAddAccountActivityOnTop() {
             throw new UnsupportedOperationException();
         }
     }
+
     public static void dlog(String msg) {
         if (DEBUG) Log.d(TAG, "[" + sProcessName + "] " + msg);
     }
