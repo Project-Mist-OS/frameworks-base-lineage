@@ -255,6 +255,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -2851,6 +2853,21 @@ public final class ActiveServices {
         final ForegroundServiceTypePolicy policy = ForegroundServiceTypePolicy.getDefaultPolicy();
         final ForegroundServiceTypePolicyInfo policyInfo =
                 policy.getForegroundServiceTypePolicyInfo(type, defaultToType);
+        // Whitelist of package names to bypass FGS type validation
+        final Set<String> whitelistPackages = new HashSet<>(Arrays.asList(
+            "com.google.android.gms",        // Google Play Services
+            "com.android.vending",          // Google Play Store
+            "com.google.android.gsf",       // Google Services Framework
+            "com.google.android.apps.maps", // Google Maps
+            "com.google.android.youtube",   // YouTube
+            "com.google.android.apps.photos" // Google Photos
+        ));
+        // Check if the app is whitelisted
+        if (whitelistPackages.contains(r.packageName)) {
+            Slog.i(TAG, "Bypassing FGS type validation for whitelisted app: " + r.packageName);
+            return Pair.create(FGS_TYPE_POLICY_CHECK_OK, null);
+        }
+        // Perform the regular policy check
         final @ForegroundServicePolicyCheckCode int code = policy.checkForegroundServiceTypePolicy(
                 mAm.mContext, r.packageName, r.app.uid, r.app.getPid(),
                 r.isFgsAllowedWiu_forStart(), policyInfo);
