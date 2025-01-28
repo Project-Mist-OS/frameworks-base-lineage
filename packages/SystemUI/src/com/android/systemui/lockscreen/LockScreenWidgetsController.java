@@ -537,6 +537,11 @@ public class LockScreenWidgetsController implements OmniJawsClient.OmniJawsObser
                 drawableRes = R.drawable.ic_wallet_lockscreen;
                 stringRes = R.string.google_wallet;
                 break;
+            case "qrscanner":
+                clickListener = v -> mActivityLauncherUtils.launchQrScanner();
+                drawableRes = R.drawable.ic_qr_code_scanner;
+                stringRes = R.string.qr_code_scanner_title;
+                break;
             default:
                 return;
         }
