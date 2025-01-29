@@ -57,7 +57,7 @@ class CustomKeyguardAffordanceViewController private constructor(): Configuratio
 
     fun showAffordanceViews() {
         affordanceViews.forEach {
-            it.visibility = View.VISIBLE
+            it.visibility = if (it.getShortcutValue() != "none") View.VISIBLE else View.GONE
         }
     }
 

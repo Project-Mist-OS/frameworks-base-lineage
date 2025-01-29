@@ -81,6 +81,7 @@ class CustomKeyguardAffordanceView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        mController.addAffordanceView(this)
         shortcutKey = when (id) {
             R.id.start_shortcut -> "keyguard_shortcut_left"
             R.id.end_shortcut -> "keyguard_shortcut_right"
@@ -98,9 +99,6 @@ class CustomKeyguardAffordanceView @JvmOverloads constructor(
         }
 
         updateSettings()
-        mController.addAffordanceView(this)
-        backgroundTintList = ColorStateList.valueOf(Color.parseColor("#99000000"))
-        updateIconTint()
     }
 
     override fun onDetachedFromWindow() {
@@ -191,7 +189,15 @@ class CustomKeyguardAffordanceView @JvmOverloads constructor(
         updateShortcutIcon()
 
         val shortcutValue = getShortcutValue()
-        visibility = if (shortcutValue == "none" || shortcutValue.isNullOrEmpty()) GONE else VISIBLE
+        if (shortcutValue == "none" || shortcutValue.isNullOrEmpty()) {
+            visibility = GONE
+            background = null
+            backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        } else {
+            visibility = VISIBLE
+            background = ContextCompat.getDrawable(context, R.drawable.keyguard_bottom_affordance_bg)
+            backgroundTintList = ColorStateList.valueOf(Color.parseColor("#99000000"))
+        }
 
         if (shortcutValue == "flashlight" && !mFlashlightCallbackRegistered) {
             mFlashlightController.addCallback(mFlashlightCallback)
@@ -243,7 +249,7 @@ class CustomKeyguardAffordanceView @JvmOverloads constructor(
         com.android.internal.util.android.VibrationUtils.triggerVibration(context, 4)
     }
 
-    private fun getShortcutValue(): String {
+    fun getShortcutValue(): String {
         return Settings.System.getString(context.contentResolver, shortcutKey) ?: when (shortcutKey) {
             "keyguard_shortcut_right" -> "qr_scanner"
             else -> "camera"
